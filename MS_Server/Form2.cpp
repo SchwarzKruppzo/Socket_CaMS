@@ -19,7 +19,7 @@ void Main(array<String^>^ args)
 }
 
 
-// TODO (Швартсуне Кумико): Связь Мастер-сервера с чат-сервером: 
+// TODO (Schwartsune Kumiko): Связь Мастер-сервера с чат-сервером: 
 // При создании -> установить соединение с мастер-сервером и послать IP адресс.
 // При завершении -> послать сигнал бедствия с IP адресом.
 void MS_Server::Form2::WhenClosed(Object^ sender, FormClosedEventArgs^ e)
@@ -29,7 +29,7 @@ void MS_Server::Form2::WhenClosed(Object^ sender, FormClosedEventArgs^ e)
 }
 void MS_Server::Form2::WhenClosing(Object^ sender, FormClosingEventArgs^ e)
 {
-	
+	// for losers
 }
 void MS_Server::Form2::WhenLoad(Object^ sender, EventArgs^ e)
 {
@@ -37,7 +37,7 @@ void MS_Server::Form2::WhenLoad(Object^ sender, EventArgs^ e)
 	{
 		server = gcnew TcpListener(27016); // сурс енджин порт 228
 		server->Start();
-		log->AppendText("Master Server succefully started.");
+		log->AppendText("Master Server succefully started.\n");
 		WaitingForClients = true;
 		Thread^ acceptClientThread = gcnew Thread(gcnew ThreadStart(this, &MS_Server::Form2::AcceptClients));
 		acceptClientThread->Start();
@@ -49,7 +49,7 @@ void MS_Server::Form2::WhenLoad(Object^ sender, EventArgs^ e)
 }
 void MS_Server::Form2::AcceptClients()
 {
-	
+
 	while (WaitingForClients) // В шахты лифта прыгали
 	{
 		try // Ноги себе ломали
@@ -79,9 +79,24 @@ void MS_Server::Form2::ClientThread(Object^ data)
 			signal = reader->ReadLine();
 			if (signal->IndexOf("%R%") > -1) 
 			{
-				// TODO (Швартсуне Кумико): На мастер-сервер будет посылаться сигнал с IP адресом, который будет занесен в массив.
-				// TODO (Швартсуне Кумико): Послать массив с IP адресами.
-				writer->WriteLine("42.121.86.12"); // DEBUG: Ответная отправка
+				log->AppendText("Sending servers list...\n");
+				for each(Object^ obj in ipList)
+				{
+					String^ ip = (String^)obj;
+					writer->WriteLine(ip);
+				}
+			}
+			else if (signal->IndexOf("%I%") > -1)
+			{
+				array<String^>^ ip = signal->Split(gcnew array<wchar_t> {' '});
+				ipList->Add(ip[1]);
+				log->AppendText("A new server has been hosted.\n");
+			}
+			else if (signal->IndexOf("%S%") > -1)
+			{
+				array<String^>^ ip = signal->Split(gcnew array<wchar_t> {' '});
+				ipList->RemoveAt(ipList->IndexOf(ip[1]));
+				log->AppendText("A server has been disconnected.\n");
 			}
 		}
 		catch (Exception^ exp)

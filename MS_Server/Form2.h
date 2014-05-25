@@ -13,7 +13,6 @@ namespace MS_Server {
 	using namespace System::IO;
 	using namespace System::Threading;
 	using namespace System::Diagnostics;
-
 	/// <summary>
 	/// Сводка для Form2
 	/// </summary>
@@ -22,6 +21,7 @@ namespace MS_Server {
 	public:
 		TcpListener^ server;
 		Boolean^ WaitingForClients;
+		ArrayList^ ipList = gcnew ArrayList();
 		
 		Form2(void)
 		{
@@ -30,7 +30,6 @@ namespace MS_Server {
 			//TODO: добавьте код конструктора
 			//
 		}
-
 	protected:
 		/// <summary>
 		/// Освободить все используемые ресурсы.
