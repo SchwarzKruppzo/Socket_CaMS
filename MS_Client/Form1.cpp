@@ -27,12 +27,13 @@ void MS_Client::Form1::WhenClosed(Object^ sender, FormClosedEventArgs^ e)
 }
 void MS_Client::Form1::WhenLoad(Object^ sender, EventArgs^ e)
 {
-	ip = "192.168.0.101"; // TODO (Швартсуне Кумико): Ввод IP адреса мастер-сервера.
 	ConnectedToMaster = false;
 	try
 	{
+		StreamReader^ readFromFile = File::OpenText(m_strMasterFile);
+		masterIP = readFromFile->ReadLine();
 		client = gcnew TcpClient();
-		client->Connect(ip,27016); 
+		client->Connect(masterIP, 27016);
 		writer = gcnew StreamWriter(client->GetStream());
 		reader = gcnew StreamReader(client->GetStream());
 		writer->AutoFlush = true;
@@ -49,6 +50,7 @@ void MS_Client::Form1::WhenLoad(Object^ sender, EventArgs^ e)
 }
 void MS_Client::Form1::RefreshClick(Object^ sender, EventArgs^ e)
 {
+	masterServer->Items->Clear();
 	if (ConnectedToMaster)
 	{
 		try
@@ -67,8 +69,7 @@ void MS_Client::Form1::ReceiveInformation()
 	{
 		try
 		{
-			// TODO (Schwartsune Kumiko): Заполнить ListBox
-			MessageBox::Show(reader->ReadLine()); // ДЕБАГ 228: Получение информации полученной в следствии бла бла бла сигнала %R$
+			masterServer->Items->Add(reader->ReadLine());
 		}
 		catch (Exception^ exp)
 		{

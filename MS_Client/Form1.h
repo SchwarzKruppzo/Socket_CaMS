@@ -21,11 +21,12 @@ namespace MS_Client {
 	{
 	public:
 		TcpClient^ client;
-		String^ ip;
+		String^ masterIP;
 		StreamWriter^ writer;
 		StreamReader^ reader;
 		Thread^ receiveThread;
 		Boolean^ ConnectedToMaster;
+		String^ m_strMasterFile = "masterserver.txt";
 		Form1(void)
 		{
 			InitializeComponent();
@@ -47,8 +48,9 @@ namespace MS_Client {
 		}
 	private: System::Windows::Forms::ListBox^  masterServer;
 	private: System::Windows::Forms::Button^  btnRefresh;
-
 	private: System::Windows::Forms::Button^  btnConnect;
+
+
 	protected:
 
 	protected:
@@ -78,7 +80,7 @@ namespace MS_Client {
 			this->masterServer->FormattingEnabled = true;
 			this->masterServer->Location = System::Drawing::Point(6, 6);
 			this->masterServer->Name = L"masterServer";
-			this->masterServer->Size = System::Drawing::Size(456, 251);
+			this->masterServer->Size = System::Drawing::Size(210, 251);
 			this->masterServer->TabIndex = 0;
 			// 
 			// btnRefresh
@@ -93,7 +95,7 @@ namespace MS_Client {
 			// 
 			// btnConnect
 			// 
-			this->btnConnect->Location = System::Drawing::Point(366, 264);
+			this->btnConnect->Location = System::Drawing::Point(108, 264);
 			this->btnConnect->Name = L"btnConnect";
 			this->btnConnect->Size = System::Drawing::Size(96, 23);
 			this->btnConnect->TabIndex = 2;
@@ -104,7 +106,7 @@ namespace MS_Client {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(469, 296);
+			this->ClientSize = System::Drawing::Size(224, 294);
 			this->Controls->Add(this->btnConnect);
 			this->Controls->Add(this->btnRefresh);
 			this->Controls->Add(this->masterServer);
