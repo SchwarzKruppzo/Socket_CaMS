@@ -101,6 +101,7 @@ namespace MS_Client {
 			this->btnConnect->TabIndex = 2;
 			this->btnConnect->Text = L"Connect";
 			this->btnConnect->UseVisualStyleBackColor = true;
+			this->btnConnect->Click += gcnew System::EventHandler(this, &Form1::Connect);
 			// 
 			// Form1
 			// 
@@ -123,5 +124,6 @@ namespace MS_Client {
 			 void WhenLoad(Object^ sender, EventArgs^ e);
 			 void RefreshClick(Object^ sender, EventArgs^ e);
 			 void ReceiveInformation();
-	};
+			 void Connect(Object^ sender, EventArgs^ e);
+};
 }

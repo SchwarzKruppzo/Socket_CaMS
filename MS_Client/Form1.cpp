@@ -4,7 +4,7 @@
 //
 // ================================================================
 #include "Form1.h"
-
+#include "ChatForm.h"
 using namespace System;
 using namespace System::Windows::Forms;
 
@@ -17,8 +17,6 @@ void Main(array<String^>^ args)
 	MS_Client::Form1 form;
 	Application::Run(%form);
 }
-
-
 
 void MS_Client::Form1::WhenClosed(Object^ sender, FormClosedEventArgs^ e)
 {
@@ -40,7 +38,6 @@ void MS_Client::Form1::WhenLoad(Object^ sender, EventArgs^ e)
 		ConnectedToMaster = true;
 		receiveThread = gcnew Thread(gcnew ThreadStart(this, &MS_Client::Form1::ReceiveInformation)); // Thread for receive information from Master Server
 		receiveThread->Start();
-		
 	}
 	catch (Exception^ exp)
 	{
@@ -55,7 +52,7 @@ void MS_Client::Form1::RefreshClick(Object^ sender, EventArgs^ e)
 	{
 		try
 		{
-			writer->WriteLine("%R%"); // Send request for server
+			writer->WriteLine("REFRESH"); // Send request for server
 		}
 		catch (Exception^ exp)
 		{
@@ -76,4 +73,11 @@ void MS_Client::Form1::ReceiveInformation()
 			break;
 		}
 	}
+}
+void MS_Client::Form1::Connect(Object^ sender,EventArgs^ e)
+{
+	String^ ip = masterServer->GetItemText(masterServer->SelectedItem);
+	MS_Client::ChatForm^ form = gcnew MS_Client::ChatForm;
+	form->Show();
+	form->Connect(ip);
 }
