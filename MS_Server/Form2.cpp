@@ -49,7 +49,6 @@ void MS_Server::Form2::WhenLoad(Object^ sender, EventArgs^ e)
 }
 void MS_Server::Form2::AcceptClients()
 {
-
 	while (WaitingForClients) // В шахты лифта прыгали
 	{
 		try // Ноги себе ломали
@@ -77,7 +76,7 @@ void MS_Server::Form2::ClientThread(Object^ data)
 		try
 		{
 			signal = reader->ReadLine();
-			if (signal->IndexOf("%R%") > -1) 
+			if (signal->IndexOf("REFRESH") > -1) 
 			{
 				log->AppendText("Sending servers list...\n");
 				for each(Object^ obj in ipList)
@@ -86,16 +85,16 @@ void MS_Server::Form2::ClientThread(Object^ data)
 					writer->WriteLine(ip);
 				}
 			}
-			else if (signal->IndexOf("%I%") > -1)
+			else if (signal->IndexOf("IPc") > -1)
 			{
-				array<String^>^ ip = signal->Split(gcnew array<wchar_t> {' '});
-				ipList->Add(ip[1]);
+				String^ ip = signal->Substring(4);
+				ipList->Add(ip);
 				log->AppendText("A new server has been hosted.\n");
 			}
-			else if (signal->IndexOf("%S%") > -1)
+			else if (signal->IndexOf("IPd") > -1)
 			{
-				array<String^>^ ip = signal->Split(gcnew array<wchar_t> {' '});
-				ipList->RemoveAt(ipList->IndexOf(ip[1]));
+				String^ ip = signal->Substring(4);
+				ipList->RemoveAt(ipList->IndexOf(ip));
 				log->AppendText("A server has been disconnected.\n");
 			}
 		}
