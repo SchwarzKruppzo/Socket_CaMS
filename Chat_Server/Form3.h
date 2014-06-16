@@ -20,11 +20,13 @@ namespace Chat_Server {
 	{
 	public:
 		TcpClient^ serverClient; // Client for sending info to Master-Server
-
 		TcpListener^ server; // Server for Chat
 		String^ masterIP;
 		String^ globalIP;
 		String^ m_strMasterFile = "masterserver.txt";
+		Boolean^ m_bStarted;
+		ArrayList^ users = gcnew ArrayList();
+
 		Form3(void)
 		{
 			InitializeComponent();
@@ -124,5 +126,8 @@ namespace Chat_Server {
 			 void CreateServer(Object^ sender, EventArgs^ e);
 			 void ShutDownServer(Object^ sender, EventArgs^ e);
 			 void DisconnectFromMasterServer();
+			 void AcceptClients();
+			 void ClientThread(Object^ data);
+			 void SendMsgAll(String^ str);
 };
 }

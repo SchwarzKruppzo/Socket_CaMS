@@ -39,7 +39,7 @@ void Chat_Server::Form3::ConnectToMasterServer()
 		StreamWriter^ writer = gcnew StreamWriter(serverClient->GetStream());
 		writer->AutoFlush = true;
 		log->AppendText("Sending info to Master-Server.\n");
-		writer->WriteLine("%I% " + globalIP); // Server sends to Master-Server his own IP.
+		writer->WriteLine("IPc " + globalIP); // Server sends to Master-Server his own IP.
 		log->AppendText("Succesfull.\n");
 		btnCreate->Enabled = false;
 		btnShutdown->Enabled = true;
@@ -55,7 +55,7 @@ void Chat_Server::Form3::DisconnectFromMasterServer()
 	{
 		StreamWriter^ writer = gcnew StreamWriter(serverClient->GetStream());
 		writer->AutoFlush = true;
-		writer->WriteLine("%S% " + globalIP);
+		writer->WriteLine("IPd " + globalIP); // нельзя через пробел делать
 	}
 	catch (Exception^ exp)
 	{
@@ -72,6 +72,9 @@ void Chat_Server::Form3::CreateServer(Object^ sender, EventArgs^ e)
 		log->AppendText("Server started.\n");
 		log->AppendText("Connecting to Master-Server.\n");
 		ConnectToMasterServer();
+		m_bStarted = true;
+		Thread^ acceptClientThread = gcnew Thread(gcnew ThreadStart(this, &Chat_Server::Form3::AcceptClients));
+		acceptClientThread->Start();
 	}
 	catch (SocketException^ exp)
 	{
@@ -91,5 +94,56 @@ void Chat_Server::Form3::ShutDownServer(Object^ sender, EventArgs^ e)
 	}
 	catch (Exception^ exp)
 	{
+	}
+}
+void Chat_Server::Form3::SendMsgAll(String^ str)
+{
+	for each (TcpClient^ client in users)
+	{
+		StreamWriter^ writer = gcnew StreamWriter(client->GetStream());
+		writer->AutoFlush = true;
+		writer->WriteLine("MSG " + str);
+	}
+}
+void Chat_Server::Form3::AcceptClients()
+{
+	while (m_bStarted) // В шахты лифта прыгали
+	{
+		try // Ноги себе ломали
+		{
+			TcpClient^ user = server->AcceptTcpClient();
+			Thread^ clientThread = gcnew Thread(gcnew ParameterizedThreadStart(this, &Chat_Server::Form3::ClientThread));
+			clientThread->Start(user);
+			users->Add(user);
+			log->AppendText("A new user connected to chat.");
+			SendMsgAll("[DEBUG|SENDING|BIG]server is here...............................................................");
+		}
+		catch (Exception^ exp) // Но пофиг
+		{
+			break;
+		}
+	}
+}
+void Chat_Server::Form3::ClientThread(Object^ data)
+{
+	TcpClient ^user = (TcpClient^)data;
+	String^ signal;
+	StreamReader^ reader = gcnew StreamReader(user->GetStream()); // Чтение биборана
+	StreamWriter^ writer = gcnew StreamWriter(user->GetStream());
+	writer->AutoFlush = true;
+	while (m_bStarted)
+	{
+		try
+		{
+			signal = reader->ReadLine();
+			if (signal->IndexOf("REFRESH") > -1)
+			{
+				
+			}
+		}
+		catch (Exception^ exp)
+		{
+			break;
+		}
 	}
 }
